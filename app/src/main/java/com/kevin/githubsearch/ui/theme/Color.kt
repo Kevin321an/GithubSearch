@@ -19,9 +19,5 @@ val takeHome_dark_blue1 = Color(0xFF1565C0)
 val takeHome_white = Color(0xFFFFFFFF)
 
 val Neutral8 = Color(0xff121212)
-val Neutral7 = Color(0xde000000)
-val Neutral6 = Color(0x99000000)
-
-val Neutral3 = Color(0x1fffffff)
 
 val Neutral0 = Color(0xffffffff)

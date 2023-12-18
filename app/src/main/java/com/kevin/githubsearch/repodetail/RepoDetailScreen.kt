@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -132,7 +131,6 @@ fun Body(detailUiState: DetailUiState) {
                     Spacer(Modifier.height(40.dp))
                     Text(
                             text = detailUiState.repo.description,
-//                                 text = stringResource(R.string.detail_placeholder),
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = DetailPadding
                     )

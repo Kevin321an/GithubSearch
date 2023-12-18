@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kevin.githubsearch.data.GitHubInfoRepo
-import com.kevin.githubsearch.data.GitHubInfoRepository
 import com.kevin.githubsearch.data.model.GitHubRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

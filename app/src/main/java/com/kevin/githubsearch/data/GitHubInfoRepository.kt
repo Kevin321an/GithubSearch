@@ -1,8 +1,6 @@
 package com.kevin.githubsearch.data
 
-import androidx.compose.material3.rememberModalBottomSheetState
 import com.kevin.githubsearch.data.datasource.remote.GitHubRemoteDataSource
-import com.kevin.githubsearch.data.datasource.remote.mapToGitHubRepo
 import com.kevin.githubsearch.data.model.GitHubRepo
 import com.kevin.githubsearch.data.model.GitHubUserInfo
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +17,8 @@ class GitHubInfoRepository(private val remoteDataSource: GitHubRemoteDataSource)
             return flow { emit(Result.Success(repos)) }
         val res = remoteDataSource.getGitHubRepos(gitHubID = gitHubID)
         if (res is Result.Success) repos = res.data
+        else
+            repos = emptyList()
         return flow { emit(res) }
     }
 

@@ -1,11 +1,7 @@
 package com.kevin.githubsearch.homescreen
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.AnimationVector1D
-import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -52,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import com.kevin.githubsearch.data.Result
 import com.kevin.githubsearch.data.model.GitHubRepo
 import com.kevin.githubsearch.data.model.GitHubUserInfo
 import com.kevin.githubsearch.ui.theme.GithubSearchTheme
