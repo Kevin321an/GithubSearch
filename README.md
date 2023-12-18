@@ -3,7 +3,7 @@
 Communicates with the public Github API to display information about a specific user.
 
 ## Install and test the compiled APK  by the link below: 
-[![](https://img.shields.io/badge/Github_Search-APK-green.svg?style=for-the-badge&logo=android)](https://github.com/Kevin321an/GithubSearch/releases/download/gitSearch.apk)
+[![](https://img.shields.io/badge/Github_Search-APK-green.svg?style=for-the-badge&logo=android)](https://github.com/Kevin321an/GithubSearch/blob/master/releases/download/gitSearch.apk)
 
 ## Screenshots
 ![gitSearch](https://github.com/Kevin321an/GithubSearch/assets/12762835/aae9bb87-932c-4ab7-852b-a3804fa27909) ![image](https://github.com/Kevin321an/GithubSearch/assets/12762835/860a31f9-4e97-466f-912e-40b67b3dfc91)
