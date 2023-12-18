@@ -42,9 +42,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kevin.githubsearch.ui.theme.Neutral0
-import com.kevin.githubsearch.ui.theme.Neutral3
-import com.kevin.githubsearch.ui.theme.Neutral6
-import com.kevin.githubsearch.ui.theme.Neutral7
 import com.kevin.githubsearch.ui.theme.Neutral8
 import com.kevin.githubsearch.ui.theme.takeHome_gray
 import com.kevin.githubsearch.ui.theme.takeHome_pink
@@ -55,6 +52,13 @@ fun RepoDetail(
         detailViewModel: DetailViewModel = hiltViewModel()
 ) {
     val detailUiState by detailViewModel.detailUiSate.collectAsStateWithLifecycle()
+    RepoDetailContainer(detailUiState = detailUiState, onBackClick)
+}
+
+@Composable
+fun RepoDetailContainer(
+        detailUiState: DetailUiState = DetailUiState.IsLoading,
+        onBackClick: () -> Unit = {}) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Header()
         StarImageContainer(detailUiState)
@@ -121,7 +125,6 @@ fun Body(detailUiState: DetailUiState) {
                     Text(
                             text = "Description:",
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Neutral6,
                             overflow = TextOverflow.Ellipsis,
                             modifier = DetailPadding
                     )
@@ -154,18 +157,13 @@ private fun Title(detailUiState: DetailUiState) {
                 modifier = Modifier
                         .heightIn(min = TitleHeight)
                         .statusBarsPadding()
-                        .background(color = Neutral0)
         ) {
-            Spacer(Modifier.height(16.dp))
             Text(
                     text = detailUiState.repo.name,
                     style = MaterialTheme.typography.headlineLarge,
-                    color = Neutral7,
                     modifier = DetailPadding
             )
-
             Spacer(Modifier.height(8.dp))
-            GitHubDivider()
         }
     }
 }
@@ -192,23 +190,9 @@ fun StarImage() {
             colorFilter = ColorFilter.tint(Color.Yellow),
             imageVector = Icons.Rounded.Star,
             contentScale = ContentScale.Crop,
-            contentDescription = "")
+            contentDescription = "starImage")
 }
 
-@Composable
-fun GitHubDivider(
-        modifier: Modifier = Modifier,
-        color: Color = Neutral3.copy(alpha = DividerAlpha),
-        thickness: Dp = 1.dp
-) {
-    Divider(
-            modifier = modifier,
-            color = color,
-            thickness = thickness
-    )
-}
-
-private const val DividerAlpha = 0.12f
 private val gradientHeight = 260.dp
 private val BottomBarHeight = 56.dp
 private val TitleHeight = 128.dp

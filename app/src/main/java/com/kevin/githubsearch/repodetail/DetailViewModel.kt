@@ -3,6 +3,7 @@ package com.kevin.githubsearch.repodetail
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kevin.githubsearch.data.GitHubInfoRepo
 import com.kevin.githubsearch.data.GitHubInfoRepository
 import com.kevin.githubsearch.data.model.GitHubRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +29,7 @@ sealed interface DetailUiState {
 @HiltViewModel
 @OptIn(ExperimentalCoroutinesApi::class)
 class DetailViewModel @Inject constructor(
-        repository: GitHubInfoRepository,
+        repository: GitHubInfoRepo,
         savedStateHandle: SavedStateHandle) : ViewModel() {
     private val repoId = savedStateHandle.getStateFlow("repoId", "")
 
@@ -38,7 +39,6 @@ class DetailViewModel @Inject constructor(
         var theRepo: GitHubRepo? = null
         repos.forEach {
             forkSum += it.forks_count
-            println("print forkSum: $forkSum")
             if (it.id.toString() == repoId)
                 theRepo = it
         }

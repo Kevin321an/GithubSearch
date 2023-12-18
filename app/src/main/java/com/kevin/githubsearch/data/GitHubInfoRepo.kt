@@ -7,4 +7,5 @@ import kotlinx.coroutines.flow.Flow
 interface GitHubInfoRepo {
     suspend fun getGitHubRepos(gitHubID: String): Flow<Result<List<GitHubRepo>>>
     suspend fun getGitHubUserInfo(gitHubID: String): Flow<Result<GitHubUserInfo>>
+    fun getCurrentRepos(): List<GitHubRepo>
 }

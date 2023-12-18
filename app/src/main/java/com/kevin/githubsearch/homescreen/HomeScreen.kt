@@ -1,6 +1,11 @@
 package com.kevin.githubsearch.homescreen
 
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.LinearOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,20 +28,23 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,9 +52,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import com.kevin.githubsearch.data.Result
 import com.kevin.githubsearch.data.model.GitHubRepo
 import com.kevin.githubsearch.data.model.GitHubUserInfo
-import com.kevin.githubsearch.ui.theme.Elevations
 import com.kevin.githubsearch.ui.theme.GithubSearchTheme
 import com.kevin.githubsearch.ui.theme.takeHome_dark_blue1
 import com.kevin.githubsearch.ui.theme.takeHome_pink
@@ -60,16 +68,33 @@ fun HomeScreen(
 ) {
     val searchText by homeScreenViewModel.searchDisplay.collectAsStateWithLifecycle()
     val searchResult by homeScreenViewModel.searchResultUIState.collectAsStateWithLifecycle()
+    HomeScreenContent(searchText = searchText, searchResult = searchResult,
+            updateSearchKey = homeScreenViewModel::updateSearchKey,
+            onRepoClick = onRepoClick,
+            searchTrigger = homeScreenViewModel::searchTrigger)
+}
 
-    Column() {
-        TopAppBar()
-        Spacer(modifier = Modifier.height(12.dp))
-        Searchbar(
-                searchText = searchText,
-                onSearchChange = homeScreenViewModel::updateSearchKey,
-                searchTrigger = homeScreenViewModel::searchTrigger,
-        )
-        SearchBody(searchResult, onRepoClick = onRepoClick)
+@Composable
+fun HomeScreenContent(searchText: String = "",
+        searchResult: SearchResultUiState = SearchResultUiState.IsLoading,
+        onRepoClick: (String) -> Unit = {},
+        updateSearchKey: (String) -> Unit = {},
+        searchTrigger: (String) -> Unit = {}) {
+    Scaffold { padding ->
+        Column(modifier = Modifier.padding(padding)) {
+            TopAppBar()
+            Spacer(modifier = Modifier.height(12.dp))
+            Searchbar(
+                    searchText = searchText,
+                    onSearchChange = updateSearchKey,
+                    searchTrigger = {
+                        searchTrigger(it)
+                    }
+            )
+            if (searchResult is SearchResultUiState.Success) {
+                SearchBody(searchResult, onRepoClick = onRepoClick)
+            }
+        }
     }
 }
 
@@ -83,6 +108,7 @@ fun TopAppBar() {
             ))
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun Searchbar(searchText: String,
         modifier: Modifier = Modifier,
@@ -90,13 +116,20 @@ fun Searchbar(searchText: String,
         searchTrigger: (String) -> Unit
 
 ) {
-
+    val keyboardController = LocalSoftwareKeyboardController.current
     Row(horizontalArrangement = Arrangement.Center,
             modifier = modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp)) {
-        SearchTextField(searchText, onSearchChange = onSearchChange)
-        ElevatedButton(onClick = { searchTrigger(searchText) }) {
+        SearchTextField(searchText,
+                onSearchChange = onSearchChange,
+                onKeyboardSearch = {
+                    searchTrigger(searchText)
+                })
+        ElevatedButton(onClick = {
+            keyboardController?.hide()
+            searchTrigger(searchText)
+        }) {
             Text(text = "SEARCH")
         }
     }
@@ -104,15 +137,22 @@ fun Searchbar(searchText: String,
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun SearchTextField(searchText: String, onSearchChange: (String) -> Unit) {
+fun SearchTextField(searchText: String,
+        onSearchChange: (String) -> Unit,
+        onKeyboardSearch: () -> Unit,
+        modifier: Modifier = Modifier) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val onSearchTriggered = {
         keyboardController?.hide()
         onSearchChange(searchText)
+        onKeyboardSearch()
     }
 
     TextField(
+            modifier = modifier.then(
+                    Modifier.testTag("searchTextField")
+            ),
             value = searchText,
             onValueChange = {
                 if (!it.contains("\n")) {
@@ -137,6 +177,7 @@ fun SearchTextField(searchText: String, onSearchChange: (String) -> Unit) {
                         onSearchTriggered()
                     },
             )
+
     )
 }
 
@@ -153,11 +194,27 @@ fun SearchBody(searchResult: SearchResultUiState,
             -> Unit
 
             is SearchResultUiState.Success -> {
-                if (searchResult.isHasUserInfo())
-                    GitHubImage(searchResult.userInfo)
-
-                if (!searchResult.isEmptyReposList()) {
-                    Repos(searchResult.repos, onSelectRepo = onRepoClick)
+                val avatarAnimatedValue = remember { Animatable(0f) }
+                val reposAnimatedValue = remember { Animatable(0f) }
+                searchResult.userInfo?.let { user ->
+                    LaunchedEffect(user.id) {
+                        avatarAnimatedValue.stop()
+                        reposAnimatedValue.stop()
+                        avatarAnimatedValue.snapTo(0f)
+                        reposAnimatedValue.snapTo(0f)
+                        avatarAnimatedValue.animateTo(1f,
+                                animationSpec = tween(durationMillis = 500, delayMillis = 50))
+                        reposAnimatedValue.animateTo(1f,
+                                animationSpec = tween(durationMillis = 300, delayMillis = 50))
+                    }
+                    GitHubImage(user,
+                            Modifier.alpha(avatarAnimatedValue.value)
+                    )
+                    Repos(searchResult.repos,
+                            onSelectRepo = onRepoClick,
+                            modifier = Modifier.alpha(reposAnimatedValue
+                                    .value)
+                    )
                 }
             }
 
@@ -169,11 +226,14 @@ fun SearchBody(searchResult: SearchResultUiState,
 }
 
 @Composable
-fun GitHubImage(userInfo: GitHubUserInfo?) {
+fun GitHubImage(userInfo: GitHubUserInfo?, modifier: Modifier = Modifier) {
     Row(horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp)) {
+            modifier = modifier.then(
+                    Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp)
+                            .testTag("githubImage"))
+    ) {
         userInfo?.image_url?.let {
             AsyncImage(
                     model = userInfo.image_url,
@@ -226,12 +286,9 @@ fun MyRepo(index: Int,
             elevation = CardDefaults.cardElevation(
                     defaultElevation = 1.dp
             ),
-//            shape =RectangleShape,
             shape = RoundedCornerShape(3.dp),
-//            border = BorderStroke(0.1.dp, Color.Transparent),
             colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.background,
-//                    containerColor = Color.Transparent,
             )
     ) {
 
@@ -272,12 +329,14 @@ private fun TopAppBarPreview() {
 @Preview
 @Composable
 private fun MyRepoPreview() {
-    MyRepo(1,
-            GitHubRepo(1,
-                    "repo Name",
-                    10,
-                    "this is a repo description",
-                    ""),
-            {}
-    )
+    GithubSearchTheme {
+        MyRepo(1,
+                GitHubRepo(1,
+                        "repo Name",
+                        10,
+                        "this is a repo description",
+                        ""),
+                {}
+        )
+    }
 }

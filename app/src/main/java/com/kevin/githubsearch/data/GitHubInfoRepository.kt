@@ -26,5 +26,5 @@ class GitHubInfoRepository(private val remoteDataSource: GitHubRemoteDataSource)
         return flow { emit(remoteDataSource.getGitHubUserInfo(gitHubID = gitHubID)) }
     }
 
-    fun getCurrentRepos() = repos
+    override fun getCurrentRepos() = repos
 }

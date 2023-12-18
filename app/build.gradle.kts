@@ -52,6 +52,7 @@ android {
 dependencies {
     val nav_version = "2.7.6"
 
+
     implementation("androidx.compose.ui:ui:1.5.4")
     implementation("androidx.compose.ui:ui-util")
     implementation("androidx.core:core-ktx:1.12.0")
@@ -64,8 +65,12 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
     implementation("io.coil-kt:coil-compose:2.5.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+
 
     implementation("androidx.navigation:navigation-compose:$nav_version")
+
+
     //DP
     implementation("com.google.dagger:hilt-android:2.49")
     implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
@@ -78,18 +83,15 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
 
-//    implementation "com.squareup.retrofit2:converter-moshi:$retrofit"
-//    implementation "com.squareup.moshi:moshi-kotlin:$moshi"
-//    kapt "com.squareup.moshi:moshi-kotlin-codegen:$moshi"
-//    moshi = '1.13.0'
-
+    testImplementation("org.hamcrest:hamcrest-all:1.3")
     testImplementation("junit:junit:4.13.2")
+    testImplementation( "app.cash.turbine:turbine:1.0.0")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test")
 
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
-
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
