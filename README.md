@@ -7,7 +7,8 @@ Communicates with the public Github API to display information about a specific 
 
 ## Screenshots
 ![gitSearch](https://github.com/Kevin321an/GithubSearch/assets/12762835/253eefee-9982-4ea9-b26a-3c9878ad7e5b)
-![image](https://github.com/Kevin321an/GithubSearch/assets/12762835/ca19afc5-e923-4f76-9e22-73024d07d22b)
+![image](https://github.com/Kevin321an/GithubSearch/assets/12762835/767129bb-fd35-4615-b459-3f5cf4c4bdd7)
+
 
 # Architecture
 An MVVM pattern is implemented in a single module, using a remote data source and memory cache 
