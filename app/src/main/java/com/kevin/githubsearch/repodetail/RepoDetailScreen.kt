@@ -36,10 +36,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.kevin.githubsearch.data.model.GitHubRepo
+import com.kevin.githubsearch.data.model.GitHubUserInfo
+import com.kevin.githubsearch.ui.theme.GithubSearchTheme
 import com.kevin.githubsearch.ui.theme.Neutral0
 import com.kevin.githubsearch.ui.theme.Neutral8
 import com.kevin.githubsearch.ui.theme.takeHome_gray
@@ -135,11 +139,17 @@ fun Body(detailUiState: DetailUiState) {
                             modifier = DetailPadding
                     )
                     Spacer(Modifier.height(16.dp))
-                    Spacer(
-                            modifier = Modifier
-                                    .padding(bottom = BottomBarHeight)
-                                    .navigationBarsPadding()
-                                    .height(8.dp)
+
+                    Text(text = "Total Number Of Forks:",
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = DetailPadding
+                    )
+
+                    Spacer(Modifier.height(16.dp))
+                    Text(text = detailUiState.forkCount.toString(),
+                            style = MaterialTheme.typography.headlineSmall,
+                            modifier = DetailPadding,
+                            color = takeHome_pink
                     )
                 }
             }
@@ -191,6 +201,24 @@ fun StarImage() {
             contentDescription = "starImage")
 }
 
+@Composable
+@Preview
+fun RepoDetailContainerPreview() {
+    GithubSearchTheme {
+        Body(
+                DetailUiState.Success(
+                        1000,
+                        GitHubRepo(
+                                1,
+                                "name",
+                                1,
+                                "description",
+                                "kevin"
+                        )
+                )
+        )
+    }
+}
 private val gradientHeight = 260.dp
 private val BottomBarHeight = 56.dp
 private val TitleHeight = 128.dp
