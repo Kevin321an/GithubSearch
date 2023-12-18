@@ -241,6 +241,16 @@ fun GitHubImage(userInfo: GitHubUserInfo?, modifier: Modifier = Modifier) {
             )
         }
     }
+    userInfo?.name?.let {
+        Row(modifier = modifier.then(
+                Modifier
+                        .fillMaxWidth(),
+                ),
+                horizontalArrangement = Arrangement.Center
+        ) {
+            Text(text = it)
+        }
+    }
 }
 
 @Composable
