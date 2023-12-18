@@ -6,7 +6,7 @@ Communicates with the public Github API to display information about a specific 
 [![](https://img.shields.io/badge/Github_Search-APK-green.svg?style=for-the-badge&logo=android)](https://github.com/Kevin321an/GithubSearch/blob/master/releases/download/gitSearch.apk)
 
 ## Screenshots
-![gitSearch](https://github.com/Kevin321an/GithubSearch/assets/12762835/0fb310ea-bf54-490f-b8b1-6fa379dcf503)
+![gitSearch](https://github.com/Kevin321an/GithubSearch/assets/12762835/253eefee-9982-4ea9-b26a-3c9878ad7e5b)
 ![image](https://github.com/Kevin321an/GithubSearch/assets/12762835/ca19afc5-e923-4f76-9e22-73024d07d22b)
 
 # Architecture
