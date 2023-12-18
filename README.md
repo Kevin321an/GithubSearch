@@ -6,7 +6,7 @@ Communicates with the public Github API to display information about a specific 
 [![](https://img.shields.io/badge/Github_Search-APK-green.svg?style=for-the-badge&logo=android)](https://github.com/Kevin321an/GithubSearch/blob/master/releases/download/gitSearch.apk)
 
 ## Screenshots
-![gitSearch](https://github.com/Kevin321an/GithubSearch/assets/12762835/aae9bb87-932c-4ab7-852b-a3804fa27909) ![image](https://github.com/Kevin321an/GithubSearch/assets/12762835/860a31f9-4e97-466f-912e-40b67b3dfc91)
+![gitSearch](https://github.com/Kevin321an/GithubSearch/assets/12762835/aae9bb87-932c-4ab7-852b-a3804fa27909) ![image](https://github.com/Kevin321an/GithubSearch/raw/master/releases/download/gitSearch.apk)
 
 # Architecture
 An MVVM pattern is implemented in a single module, using a remote data source and memory cache 
@@ -17,7 +17,6 @@ An MVVM pattern is implemented in a single module, using a remote data source an
 
 - User Interface built with **[Jetpack Compose](https://developer.android.com/jetpack/compose)**
 - Reactive UIs using **[Flow](https://developer.android.com/kotlin/flow)** and **[coroutines](https://kotlinlang.org/docs/coroutines-overview.html)** for asynchronous operations.
-- A presentation layer that contains a Compose screen (View) and a ViewModel per screen.
 - A data layer with a repository and one remote data source; use memory cache the result
 - Dependency injection using [Hilt](https://developer.android.com/training/dependency-injection/hilt-android).
 - Use Retrofit for REST-based web service and [Kotlin Serialization](https://kotlinlang.org/docs/serialization.html) for JSON decoding 
