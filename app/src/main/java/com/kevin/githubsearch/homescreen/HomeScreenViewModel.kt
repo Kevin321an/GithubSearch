@@ -52,10 +52,9 @@ class HomeScreenViewModel @Inject constructor(
                                     (f1 is Result.Error && f2 is Result.Error) ->
                                         SearchResultUiState.LoadFailed
 
-                                    (f1 is Result.Success && f2 is Result.Success) ->{
+                                    (f1 is Result.Success && f2 is Result.Success) -> {
                                         SearchResultUiState.Success(f1.data, f2.data)
                                     }
-
 
 //                                    (f1 is Result.Success && f2 is Result.Error) -> {
 //                                        SearchResultUiState.Success(f1.data)
@@ -64,7 +63,6 @@ class HomeScreenViewModel @Inject constructor(
 //                                    (f1 is Result.Error && f2 is Result.Success) -> {
 //                                        SearchResultUiState.Success(repos = f2.data)
 //                                    }
-
                                     else -> {
                                         SearchResultUiState.LoadFailed
                                     }
@@ -83,6 +81,7 @@ class HomeScreenViewModel @Inject constructor(
     }
 
     fun searchTrigger(key: String) {
+        savedStateHandle[SEARCH_KEY] = ""
         savedStateHandle[SEARCH_KEY] = key
     }
 }

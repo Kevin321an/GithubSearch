@@ -1,7 +1,10 @@
 package com.kevin.githubsearch.homescreen
-
-import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -31,12 +34,12 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -66,7 +69,8 @@ fun HomeScreen(
     HomeScreenContent(searchText = searchText, searchResult = searchResult,
             updateSearchKey = homeScreenViewModel::updateSearchKey,
             onRepoClick = onRepoClick,
-            searchTrigger = homeScreenViewModel::searchTrigger)
+            searchTrigger = homeScreenViewModel::searchTrigger
+            )
 }
 
 @Composable
@@ -75,6 +79,7 @@ fun HomeScreenContent(searchText: String = "",
         onRepoClick: (String) -> Unit = {},
         updateSearchKey: (String) -> Unit = {},
         searchTrigger: (String) -> Unit = {}) {
+
     Scaffold { padding ->
         Column(modifier = Modifier.padding(padding)) {
             TopAppBar()
@@ -86,9 +91,8 @@ fun HomeScreenContent(searchText: String = "",
                         searchTrigger(it)
                     }
             )
-            if (searchResult is SearchResultUiState.Success) {
-                SearchBody(searchResult, onRepoClick = onRepoClick)
-            }
+            SearchBody(searchResult,
+                    onRepoClick = onRepoClick)
         }
     }
 }
@@ -181,35 +185,62 @@ fun SearchBody(searchResult: SearchResultUiState,
         modifier: Modifier = Modifier,
         onRepoClick: (String) -> Unit
 ) {
-
     Column(modifier.fillMaxWidth()) {
+        var isVisiBle by remember {
+            mutableStateOf(true)
+        }
+
         when (searchResult) {
             SearchResultUiState.LoadFailed,
             SearchResultUiState.IsLoading,
             -> Unit
 
             is SearchResultUiState.Success -> {
-                val avatarAnimatedValue = remember { Animatable(0f) }
-                val reposAnimatedValue = remember { Animatable(0f) }
                 searchResult.userInfo?.let { user ->
-                    LaunchedEffect(user.id) {
-                        avatarAnimatedValue.stop()
-                        reposAnimatedValue.stop()
-                        avatarAnimatedValue.snapTo(0f)
-                        reposAnimatedValue.snapTo(0f)
-                        avatarAnimatedValue.animateTo(1f,
-                                animationSpec = tween(durationMillis = 500, delayMillis = 50))
-                        reposAnimatedValue.animateTo(1f,
-                                animationSpec = tween(durationMillis = 300, delayMillis = 50))
+                    AnimatedVisibility(visible = isVisiBle,
+                            enter = slideInVertically(
+                                    initialOffsetY = { fullHeight -> fullHeight },
+                                    animationSpec = tween(
+                                            durationMillis = 500,
+                                            easing = LinearOutSlowInEasing
+                                    )
+                            ) + fadeIn(
+                                    animationSpec = tween(
+                                            durationMillis = 500,
+                                            easing = LinearOutSlowInEasing
+                                    )
+                            ),
+                            exit = slideOutVertically()
+                    ) {
+                        Column {
+                            GitHubImage(user
+                            )
+                        }
+
                     }
-                    GitHubImage(user,
-                            Modifier.alpha(avatarAnimatedValue.value)
-                    )
-                    Repos(searchResult.repos,
-                            onSelectRepo = onRepoClick,
-                            modifier = Modifier.alpha(reposAnimatedValue
-                                    .value)
-                    )
+                    AnimatedVisibility(visible = isVisiBle,
+                            enter = slideInVertically(
+                                    initialOffsetY = { fullHeight -> fullHeight },
+                                    animationSpec = tween(
+                                            durationMillis = 1000,
+                                            easing = LinearOutSlowInEasing
+                                    )
+                            ) + fadeIn(
+                                    animationSpec = tween(
+                                            durationMillis = 1000,
+                                            easing = LinearOutSlowInEasing
+                                    )
+                            ),
+                            exit = slideOutVertically()
+                    ) {
+                        Column {
+                            Repos(searchResult.repos,
+                                    onSelectRepo = onRepoClick
+
+                            )
+                        }
+
+                    }
                 }
             }
 
@@ -217,6 +248,7 @@ fun SearchBody(searchResult: SearchResultUiState,
                 Unit
             }
         }
+        isVisiBle = searchResult is SearchResultUiState.Success
     }
 }
 
@@ -245,7 +277,7 @@ fun GitHubImage(userInfo: GitHubUserInfo?, modifier: Modifier = Modifier) {
         Row(modifier = modifier.then(
                 Modifier
                         .fillMaxWidth(),
-                ),
+        ),
                 horizontalArrangement = Arrangement.Center
         ) {
             Text(text = it)
